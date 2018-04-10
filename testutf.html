@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/ol.css" type="text/css">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <!--  <script src="../build/ol.js"></script>-->
+    <script src="../build/ol-debug.js"></script>
+</head>
+<body>
+<div id="map" class="map" style="height:800px;"></div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        console.log("reday");
+        var temptilemill="http://192.168.23.102:20008/tile/testny/{z}/{x}/{y}.png";
+        var tileJSON ={};
+        tileJSON.attribution="";
+        //tileJSON.bounds=[- 20037508.3427892,- 20037508.3427892, 20037508.3427892, 20037508.3427892];
+        // tileJSON.bounds=[92.0961074829102,18.0601139068604,134.511642456055,52.6001663208008];
+        tileJSON.bounds=[-180,-85.05112877980659,180,85.05112877980659];//testdynamic
+        //tileJSON.bounds=[81.8787002563477,3.58839797973633,135.360427856445,53.8122596740723];//district_cn
+        //tileJSON.grids=["http://localhost:8080/geoserver/edcution/wms?service=WMS&version=1.1.0&request=GetMap&layers=edcution:education_webmu&styles=&bbox={utfbox}&width=256&height=256&srs=EPSG:3857&format=application%2Fjson%3Btype%3Dutfgrid"];
+        /*tileJSON.grids=[ '/geoserver/gwc/service/tms/1.0.0/' + layer +
+         '@EPSG%3A'+projection_epsg_no+'@utfgrid/{z}/{x}/{-y}.utfgrid'];*/
+        // tileJSON.grids=["http://localhost:20008/tile/testdynamic/{z}/{x}/{y}.grid.json"];
+        // tileJSON.grids=["http://localhost:20008/tile/formalhexgonal/{z}/{x}/{y}.grid.json"];
+        tileJSON.grids=["http://192.168.23.102:20008/tile/testny/{z}/{x}/{y}.grid.json"];
+        tileJSON.maxzoom=18;
+        tileJSON.minzoom=2;
+        tileJSON.scheme="xyz";
+
+        var gridSourceutf = new ol.source.TileUTFGrid({
+
+            tileJSON:tileJSON,
+         //   jsonp:true
+        });
+
+        var gridLayerutf = new ol.layer.Tile({source: gridSourceutf});
+
+         map = new ol.Map({
+            //renderer: ('webgl'),
+            layers: [
+                /*new ol.layer.Tile({
+                 source: new ol.source.OSM()
+                 }),*/
+                /* new ol.layer.Tile({
+                 source: new ol.source.XYZ({
+                 crossOrigin: 'anonymous',
+                 //url: '/geoserver/gwc/service/tms/1.0.0/' + 'sf%3Atestsmaller' +
+                 // '@EPSG%3A'+'3857'+'@png/{z}/{x}/{-y}.png'
+                 //url:tilemill_nongye+"?t="+(new Date()).valueOf()+"$"+Math.floor(Math.random()*999999999999+1000).toString()
+                 url:tilemill_nongye_seven
+                 //  url:'http://mt1.google.cn/vt/lyrs=s@110&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}'
+                 }),
+                 }),
+                 new ol.layer.Tile({
+                 source: new ol.source.XYZ({
+                 crossOrigin: 'anonymous',
+                 //url: '/geoserver/gwc/service/tms/1.0.0/' + 'sf%3Atestsmaller' +
+                 // '@EPSG%3A'+'3857'+'@png/{z}/{x}/{-y}.png'
+                 //url:tilemill_nongye+"?t="+(new Date()).valueOf()+"$"+Math.floor(Math.random()*999999999999+1000).toString()
+                 url:tilemill_nongye_five
+                 //  url:'http://mt1.google.cn/vt/lyrs=s@110&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}'
+                 }),
+                 }),*/
+                new ol.layer.Tile({
+                    source: new ol.source.XYZ({
+                        crossOrigin: 'anonymous',
+                        //url: '/geoserver/gwc/service/tms/1.0.0/' + 'sf%3Atestsmaller' +
+                        // '@EPSG%3A'+'3857'+'@png/{z}/{x}/{-y}.png'
+                        //url:tilemill_nongye+"?t="+(new Date()).valueOf()+"$"+Math.floor(Math.random()*999999999999+1000).toString()
+                        url:temptilemill
+                        //  url:'http://mt1.google.cn/vt/lyrs=s@110&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}'
+                    }),
+                })
+                ,gridLayerutf
+
+            ],
+            // layers: [rasterLayer,rasterLayer_font,pro,gridLayerutf,hightlight],//utf grid测试用例
+            target: document.getElementById('map'),
+            view: new ol.View({
+                //center: ol.proj.transform([107.59117,37.58200],"EPSG:4326","EPSG:3857"),
+                center: [174572.927145,3734046.62898],
+
+                //center:[107.59117,37.58200],
+                zoom: 12,
+                projection:'EPSG:3857'
+            })
+        });
+
+        var displayCountryInfo = function(coordinate) {
+            var viewResolution = /** @type {number} */ (map.getView().getResolution());
+            gridSourceutf.forDataAtCoordinateAndResolution(coordinate, viewResolution,
+                function(data) {
+                    // If you want to use the template from the TileJSON,
+                    //  load the mustache.js library separately and call
+                    //  info.innerHTML = Mustache.render(gridSource.getTemplate(), data);
+                   // map.getTarget().style.cursor= data ? 'pointer' : '';
+                    if (data) {
+                        // flagElement.src = 'data:image/png;base64,' + data['flag_png'];
+                        //createDiv.innerHTML = data['admin'];
+                        /*
+                         createDiv.innerHTML = data.province+data.city+data.name+"  类型:"+data.schooltype;
+                         */
+                        // createDiv.innerHTML = data.province+data.city+data.district;
+                        //createDiv.innerHTML ="数据详情:" +"     数据唯一标识码: "+data.GID+"    数据归属："+data.QXMC+"    数据类别: "+data.TBLXMC;
+                        console.log("123");
+                      var datas=data;
+                        /*  var hlightfeat= new ol.Feature({
+                         geometry: new ol.geom.Point( ol.proj.transform([Number(data.x),Number(data.y)],"EPSG:4326","EPSG:3857")),
+                         name: 'Mygl'
+                         });//点
+                         */
+
+
+                        /*   两类分类处理暂注释   var hlightfeatgeom= ( new ol.format.GeoJSON()).readGeometry(data.xyz);
+                         var hlightfeat= new ol.Feature({
+                         geometry: hlightfeatgeom,
+                         //  geometry: hlightfeatgeom.transform("EPSG:4326","EPSG:3857"),
+                         name: 'Mygl'
+                         });//面
+                         hlightfeat.setStyle(getStyle());
+                         hightlight.getSource().clear();
+                         hightlight.getSource().addFeature(hlightfeat);*/
+                    }
+
+                });
+        };
+        map.on('click', function(evt) {
+            debugger
+            displayCountryInfo(evt.coordinate);
+        });
+    });
+</script>
+</body>
+</html>
